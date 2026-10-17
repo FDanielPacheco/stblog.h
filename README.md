@@ -2,8 +2,6 @@
 
 A small single-header logging library for C and C++. By default, it logs nicely formatted messages to the console (stderr), but custom handlers and output streams can easily be provided.
 
-## Default example
-
 ```
 [example1][INFO ] (src/mixlink.c:1048) :block block2 [t_tick] success init ... 
 [example1][INFO ] (src/mixlink.c:1048) :block block3 [t_tick] success init ... 
