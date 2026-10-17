@@ -9,25 +9,28 @@
  * @author    Fábio D. Pacheco, 
  * @email     fabio.d.pacheco@inesctec.pt or pacheco.castro.fabio@gmail.com
  *
- *  @note
- *  stblog - simple logging system 
- *  Copyright (C) 2026 Fábio D. Pacheco 
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- *  USA
+ * @note
+ * stblog - simple logging system 
+ * Copyright (C) 2026 Fábio D. Pacheco 
  * 
+ * Permission is hereby granted, free of charge, to any person obtaining a 
+ * copy of this software and associated documentation files (the “Software”), 
+ * to deal in the Software without restriction, including without limitation 
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+ * and/or sell copies of the Software, and to permit persons to whom the 
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included 
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+ * THE SOFTWARE.
+ *
  */
 
 #ifndef STBLOG_H
@@ -38,6 +41,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
+
+#ifndef STBIDEF
+        #define STBIDEF
+#endif
 
 enum stblog_level {
         LOG_DEBUG = 0,
@@ -60,13 +67,13 @@ struct stblog_logger {
         int enable;
 };
 
-static inline void
+STBIDEF void
 stblog_default(
         struct stblog_report  report,
         const char           *msg
 );
 
-static inline void 
+STBIDEF void 
 stblog_emit(
         struct stblog_logger *lg,
         struct stblog_report  report,
@@ -74,7 +81,7 @@ stblog_emit(
         ...
 );
 
-static inline void
+STBIDEF void
 stblog_hexdump(
         struct stblog_logger *lg,
         struct stblog_report  report,
@@ -82,7 +89,34 @@ stblog_hexdump(
         size_t                nelem 
 );
 
-static inline void
+#ifndef DISABLE_LOGGING
+        #define LOG_ERRNO(logger, label, err, prio, fmt, ...)                          \
+                stblog_emit(                                                           \
+                        (logger),                                                      \
+                        (struct stblog_report){label, __FILE__, __LINE__, err, prio},  \
+                        fmt, ##__VA_ARGS__                                             \
+                )
+        #define LOG_HEXDUMP(logger, label, prio, buf, bytes)                           \
+                stblog_hexdump(                                                        \
+                        (logger),                                                      \
+                        (struct stblog_report){label, __FILE__, __LINE__, 0, prio},    \
+                        (buf), (bytes)                                                 \
+                )
+#else
+        #define LOG_ERRNO(logger, label, err, prio, fmt, ...) \
+                ((void)0)
+        #define LOG_HEXDUMP(logger, label, prio, buf, bytes)  \
+                ((void)0)
+#endif // DISABLE_LOGGING
+
+#endif // STBLOG_H
+
+#ifdef STBLOG_IMPLEMENTATION
+
+/** 
+@brief Console print
+ */
+STBIDEF void
 stblog_default(
         struct stblog_report  report,
         const char           *msg
@@ -100,7 +134,7 @@ stblog_default(
         if ( report.prio < 0 || report.prio > LOG_FATAL ) {
                 report.prio = LOG_DEBUG;
         }
-        const char *errmsg = !report.err_code ? "" : strerror(-report.err_code);
+        const char *errmsg = !report.err_code ? "" : strerror(report.err_code);
         fprintf(
                 stderr,
                 "%s[%s][%s] (%s:%d) %s:%s %s\n",
@@ -118,7 +152,7 @@ stblog_default(
 /** 
 @brief Call either external logging system or internal logging 
  */
-static inline void
+STBIDEF void
 stblog_emit(
         struct stblog_logger *lg,
         struct stblog_report  report,
@@ -139,22 +173,10 @@ stblog_emit(
         }
 }
 
-#ifndef DISABLE_LOGGING
-        #define LOG_ERRNO(logger, label, err, prio, fmt, ...)                          \
-                stblog_emit(                                                           \
-                        (logger),                                                      \
-                        (struct stblog_report){label, __FILE__, __LINE__, err, prio},  \
-                        fmt, ##__VA_ARGS__                                             \
-                )
-#else
-        #define LOG_ERRNO(logger, label, err, prio, fmt, ...) \
-                ((void)0)
-#endif
-
 /** 
 @brief External call to hexdump to dump information in pretty hexadecimal 
  */
-static inline void
+STBIDEF void
 stblog_hexdump(
         struct stblog_logger *lg,
         struct stblog_report  report,
@@ -171,17 +193,4 @@ stblog_hexdump(
         (void) pclose(fp);        
 }
 
-#ifndef DISABLE_LOGGING
-        #define LOG_HEXDUMP(logger, label, prio, buf, bytes)                         \
-                stblog_hexdump(                                                      \
-                        (logger),                                                    \
-                        (struct stblog_report){label, __FILE__, __LINE__, 0, prio},  \
-                        (buf), (bytes)                                                \
-                )
-#else
-        #define LOG_HEXDUMP(logger, label, prio, buf, bytes) \
-                ((void)0)
-#endif
-
-
-#endif
+#endif // STBLOG_IMPLEMENTATION
