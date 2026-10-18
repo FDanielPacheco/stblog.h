@@ -1,4 +1,4 @@
-# stblog.h
+# stb_log.h
 
 A small single-header logging library for C and C++. By default, it logs nicely formatted messages to the console (stderr), but custom handlers and output streams can easily be provided.
 
@@ -35,14 +35,14 @@ A small single-header logging library for C and C++. By default, it logs nicely 
 
 ## Usage Examples
 
-To use `stblog.h`, define `STBLOG_IMPLEMENTATION` in one C or C++ source file before including the header. In all other source files, simply include the header normally.
+To use `stb_log.h`, define `STB_LOG_IMPLEMENTATION` in one C or C++ source file before including the header. In all other source files, simply include the header normally.
 
 ### Default Logger 
 This example demonstrates using the default console logger to report a serial port opening failure.
 
 ```c
-#define STBLOG_IMPLEMENTATION
-#include "stblog.h"
+#define STB_LOG_IMPLEMENTATION
+#include "stb_log.h"
 // ...
 #include <xcserial.h>
 #define PORT "/dev/ttyUSB0"
@@ -69,8 +69,8 @@ int main() {
 This example shows how to log incoming raw data buffers in a pretty hexadecimal format using the default logger.
 
 ```c
-#define STBLOG_IMPLEMENTATION
-#include "stblog.h"
+#define STB_LOG_IMPLEMENTATION
+#include "stb_log.h"
 #define APP_NAME "example-app-name"
 // ...
 #include <xcserial.h>
@@ -128,7 +128,7 @@ struct stblog_report {
         enum stblog_level prio;
 };
 ```
-If you define `#define DISABLE_LOGGING` macro before including `stblog.h` either in the source code or within the compilation flags, then no matter the level of verbosity no message will appear. 
+If you define `#define DISABLE_LOGGING` macro before including `stb_log.h` either in the source code or within the compilation flags, then no matter the level of verbosity no message will appear. 
 
 ## Author
 
@@ -137,4 +137,4 @@ Fábio D. Pacheco
 
 ## License
 
-`stblog.h` is released under the [MIT](https://opensource.org/license/MIT).
+`stb_log.h` is released under the [MIT](https://opensource.org/license/MIT).

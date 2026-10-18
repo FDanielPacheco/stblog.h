@@ -1,16 +1,17 @@
 /**
- * @file      stblog.h
+ * @file      stb_log.h
  * 
  * @version   0.2.0
  *
  * @date      16-03-2026
  * @date      06-09-2026
+ * @date      18-10-2026
  *  
  * @author    Fábio D. Pacheco, 
  * @email     fabio.d.pacheco@inesctec.pt or pacheco.castro.fabio@gmail.com
  *
  * @note
- * stblog - simple logging system 
+ * stb_log - simple logging system 
  * Copyright (C) 2026 Fábio D. Pacheco 
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a 
@@ -33,8 +34,8 @@
  *
  */
 
-#ifndef STBLOG_H
-#define STBLOG_H
+#ifndef STB_LOG_H
+#define STB_LOG_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -109,9 +110,9 @@ stblog_hexdump(
                 ((void)0)
 #endif // DISABLE_LOGGING
 
-#endif // STBLOG_H
+#endif // STB_LOG_H
 
-#ifdef STBLOG_IMPLEMENTATION
+#ifdef STB_LOG_IMPLEMENTATION
 
 /** 
 @brief Console print
@@ -193,4 +194,4 @@ stblog_hexdump(
         (void) pclose(fp);        
 }
 
-#endif // STBLOG_IMPLEMENTATION
+#endif // STB_LOG_IMPLEMENTATION
